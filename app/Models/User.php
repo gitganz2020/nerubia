@@ -45,6 +45,6 @@ class User extends Authenticatable
 
     public function movies()
     {
-        return $this->hasMany('App\Models\Movie');
+        return $this->hasMany(Movie::class);
     }
 }

@@ -8,6 +8,7 @@
     <style rel="stylesheet">
         .item_title{text-decoration: underline;}
         .list-by-id,.close{ display:none; }
+        .popular{ color: orange !important; }
     </style>
 </head>
 <body>
@@ -27,7 +28,7 @@
             </table>
 
             <ul class="list-group list-by-id">
-            <a href="javascript:void(0)" class="close">Close</a>
+                <li class="list-group-item"><a href="javascript:void(0)" class="close">Close</a></li>
             </ul>  
        </div>
     </div>
@@ -42,31 +43,28 @@
             $.get("/api/movies", function(results, status){
                 var res = JSON.stringify(results);
                 var obj = JSON.parse(res);
-                // console.log(obj);
                 $.each(obj, function(key, item){
-                    $("table").append("<tr><td><a id='movie_id' data-key='"+item.id+"' href='javascript:void(0)' class='item_title'>"+ item.title +"</a></td><td>"+ item.vote +"</td><td>"+ item.user_id +"</td><td>"+ item.release_at +"</td></tr>");
+                    var popular = "";
+                    $("table").append("<tr><td><a id='movie_id' data-key='"+item.id+"' href='javascript:void(0)' class='item_title'>"+ item.title +"</a></td><td>"+ item.vote +"</td><td>"+ item.user.firstname +"</td><td>"+ item.release_at +"</td></tr>");
+                    if(item.vote === 5) { 
+                        $('a').addClass("popular");
+                    } 
                 });
 
-                $('.item_title').one('click',function(e){
-
-                    var movieId = $("#movie_id").data('key');
-
-                    $(".list-by-id").show();
-
+                $('.item_title').click(function(){
+                    var movieId = $(this).data('key');
                     $.get("/api/movies/"+ movieId, function(data, status){
                         var eachData = JSON.stringify(data);
                         var v = JSON.parse(eachData);
-
-                        $(".list-by-id").html("<li class='list-group-item active'>"+v.title+"</li><li class='list-group-item'>"+v.overview+"</li><li class='list-group-item'>"+v.user_id+"</li><li class='list-group-item'>"+v.vote+"</li><li class='list-group-item'>"+v.release_at+"</li>");
-
-                        $(".close").click(function(){
-                            $(".list-by-id").hide();
-                        });
-
+                        $(".list-by-id").html("<li class='list-group-item active'>"+v.title+"</li><li class='list-group-item'>"+v.overview+"</li><li class='list-group-item'>"+v.user.firstname+"</li><li class='list-group-item'>"+v.vote+"</li><li class='list-group-item'>"+v.release_at+"</li>");
+                        if(v.vote === 5) { 
+                            $('.active').addClass("popular");
+                        } 
                     });
-
-                    e.preventDefault();
-
+                    $(".list-by-id,.close").show();
+                    $(".close").click(function(){
+                        $(".list-by-id").hide();
+                    });
                 });
 
             });

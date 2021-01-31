@@ -17,9 +17,7 @@ class MoviesController extends BaseController
      */
     public function index(Request $request)
     {
-        //return $request->user()->movies;
-        return Movie::all();
-        //return Movie::paginate(5);
+        return Movie::with('user')->get();
     }
 
     /**
@@ -62,7 +60,7 @@ class MoviesController extends BaseController
      */
     public function show($id)
     {
-        $movie = Movie::find( $id );
+        $movie = Movie::with('user')->find( $id );
 
         if($movie){
             return response()->json($movie, 200);
@@ -81,7 +79,7 @@ class MoviesController extends BaseController
      */
     public function update(Request $request, $id)
     {
-        $existingMovie = Movie::find( $id );
+        $existingMovie = Movie::with('user')->find( $id );
 
         if($existingMovie){
 
